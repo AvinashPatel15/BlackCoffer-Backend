@@ -285,7 +285,6 @@ const Relevance = async (req, res) => {
         $group: {
           _id: "$country",
           totalRelevance: { $sum: "$relevance" },
-          data: { $push: "$$ROOT" },
         },
       },
       { $sort: { totalRelevance: -1 } },
