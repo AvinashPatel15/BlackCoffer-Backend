@@ -279,6 +279,8 @@ const Relevance = async (req, res) => {
         $group: {
           _id: "$country",
           totalRelevance: { $sum: "$relevance" },
+          totalLikelihood: { $sum: "$likelihood" },
+          totalIntensity: { $sum: "$intensity" },
         },
       },
       { $sort: { totalRelevance: -1 } },
