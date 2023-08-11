@@ -274,12 +274,6 @@ const Country = async (req, res) => {
 
 const Relevance = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-
-    const totalDocs = await chartModel.countDocuments();
-    const totalPages = Math.ceil(totalDocs / limit);
-
     const chartData = await chartModel.aggregate([
       {
         $group: {
@@ -288,15 +282,9 @@ const Relevance = async (req, res) => {
         },
       },
       { $sort: { totalRelevance: -1 } },
-      { $skip: (page - 1) * limit },
-      { $limit: limit },
     ]);
 
     return res.send({
-      page,
-      limit,
-      totalPages,
-      totalDocs,
       data: chartData,
     });
   } catch (error) {
