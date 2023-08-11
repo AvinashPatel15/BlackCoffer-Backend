@@ -247,6 +247,30 @@ const publishedDate = async (req, res) => {
 
 const Country = async (req, res) => {
   try {
+    const chartData = await chartModel.aggregate([
+      {
+        $group: {
+          _id: "$country",
+          totalRelevance: { $sum: "$relevance" },
+          totalLikelihood: { $sum: "$likelihood" },
+          totalIntensity: { $sum: "$intensity" },
+        },
+      },
+      { $sort: { totalRelevance: -1 } },
+    ]);
+
+    return res.send({
+      data: chartData,
+    });
+  } catch (error) {
+    return res.status(401).send({ message: "Something Went Wrong!" });
+  }
+};
+
+// Relevance
+
+const Relevance = async (req, res) => {
+  try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
 
@@ -263,30 +287,6 @@ const Country = async (req, res) => {
       limit,
       totalPages,
       totalDocs,
-      data: chartData,
-    });
-  } catch (error) {
-    return res.status(401).send({ message: "Something Went Wrong!" });
-  }
-};
-
-// Relevance
-
-const Relevance = async (req, res) => {
-  try {
-    const chartData = await chartModel.aggregate([
-      {
-        $group: {
-          _id: "$country",
-          totalRelevance: { $sum: "$relevance" },
-          totalLikelihood: { $sum: "$likelihood" },
-          totalIntensity: { $sum: "$intensity" },
-        },
-      },
-      { $sort: { totalRelevance: -1 } },
-    ]);
-
-    return res.send({
       data: chartData,
     });
   } catch (error) {
